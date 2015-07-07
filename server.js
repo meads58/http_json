@@ -7,6 +7,10 @@ app.get('/', function(request, response){
   response.sendFile(path.join(__dirname +'/index.html'));
 });
 
+app.post('/submitJson', function(request, response){
+  console.log(request.body)
+})
+
 server.listen(3000, function(){
   console.log("Server listening on port 3000");
 });

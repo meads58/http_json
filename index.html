@@ -75,38 +75,59 @@ body {
   var resizeTimer;
   var beforeWidth = window.innerWidth;
   var beforeHeight = window.innerHeight;
+  var keyTimingStarted = false;
+  var startTime;
+  var message = {}
+  var buttonElement = document.getElementsByTagName("button");
 
-  var constructMesssage = function() {
-    var message = {
+  var constructMesssage = function(eventType) {
+    message = {
     "websiteURL" : location.href,
-    "sessionID" : "1122"
+    "sessionID" : "1122",
+    "eventType" : eventType
   }
     return message
-  }
+  };
 
   var pasting = function (idName){
-    var message = constructMesssage();
-    message["pasted"] = true;
-    message["eventType"] = "copyAndPasted";
-    message["formId"] = idName
-    console.log(message)
-  }
+    copyPasteMessage('pasted', idName)
+  };
 
   var copying = function(idName){
-    var message = constructMesssage();
-    message["copied"] = true;
-    message["eventType"] = "copyAndPasted";
+    copyPasteMessage('copied', idName)
+  };
+
+  var copyPasteMessage = function(copyOrPasted, idName) {
+    var message = constructMesssage("copyAndPasted");
+    message[copyOrPasted] = true;
     message["formId"] = idName
     console.log(message)
   }
 
   var setResize = function(beforeWidth, beforeHeight) {
-    var message = constructMesssage();
-    message["eventType"] = "resize";
+    var message = constructMesssage("resize");
     message["resizeFrom"] = {"width": beforeWidth, "height": beforeHeight};
     message["resizeTo"] = {"width": window.innerWidth, "height": window.innerHeight};
     browserResize = true
-  }
+  };
+
+  var keyTimer = function() {
+    if (keyTimingStarted === false) {
+      startTime = new Date;
+      keyTimingStarted  = true;
+    }
+  };
+
+  var stopTimer = function() {
+    if (keyTimingStarted === false){
+      timeInSecs = 0
+    }else {
+      var stopTime = new Date;
+      var timeInSecs = (stopTime.getTime() - startTime.getTime()) / 1000
+    }
+    sendingJson();
+    console.log(timeInSecs)
+  };
 
   window.addEventListener("resize", function(e) {
     clearTimeout(resizeTimer);
@@ -117,6 +138,26 @@ body {
       }
     }, 500);
   });
+
+  document.addEventListener("keydown", keyTimer);
+  buttonElement[0].addEventListener("click", stopTimer);
+
+  var sendingJson = function() {
+     $.ajax(
+    {
+      url : '/submitJson',
+      type: 'post',
+      dataType: 'json',
+      data: message,
+      success: function(data) { alert(data); },
+      error: function(request, status, error) { alert(request.responseText); }
+  });
+
+
+  }
+
+
+
 
 </script
 

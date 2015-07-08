@@ -1,64 +1,48 @@
-Ravelin Code Test
-=================
+##Set up
+* make sure npm is installed
+* clone the repo and cd into the directory
+* run ```npm install```
+* Start the server with ```npm start```
+* In a browser go to http://localhost:3000
 
-## Summary
-We need an http server that will accept any post request (json) from muliple clients' websites. Each request forms part of a struct (for that particular visitor) that will be printed to the terminal when the struct is fully complete.
+##Functionality
+* Data is saved in the data/json_messages.txt file
+* Resize the window and the before and after size will be saved.
+* Copy and Past in any of the fields will update the data file with this action.
+* The time from your first keystroke in any field until you press the Submit button will be recorded in the data file.
 
-For the js part of the test please feel free to use any libraries that may help you **but do not use any non standard library packages for the Go service**.
-
-## Frontend (JS)
-Include javascript into the index.html (supplied) that captures and posts data every time one of the below events happens; this means you will be posting multiple times per visitor. Assume only 1 resize occurs.
-
-  - if the screen resizes, the before and after dimensions
-  - copy & paste (for each field)
-  - time taken from the 1st character typed to clicking the submit button
-
-### Example JSON Requests
+##Improvements given more time
+* I would move all the javascript into a separate js folder.
+* Set up tests using mocha, chai and selenium-io
+* Arrange the json object to append within a sessionID, something like this.
 ```
-{
-  "eventType": "copyAndPaste",
-  "websiteUrl": "https://ravelin.com",
-  "sessionId": "123123-123123-123123123",
-  "pasted": true,
-  "formId": "inputCardNumber"
-}
-
-{
-  "eventType": "timeTaken",
-  "websiteUrl": "https://ravelin.com",
-  "sessionId": "123123-123123-123123123",
-  "time": 72, // seconds
-}
-
-...
-
+[
+    {
+        "sessionId": "123123-123123-123123123",
+        "events": [
+            {
+                "eventType": "copyAndPaste",
+                "websiteUrl": "https://ravelin.com",
+                "pasted": true,
+                "formId": "inputCardNumber"
+            },
+            {
+                "eventType": "timeTaken",
+                "websiteUrl": "https://ravelin.com",
+                "time": 72
+            }
+        ]
+    },
+    {
+        "sessionid": "223322-223322-443344223",
+        "events": [
+            {
+                "eventType": "copyAndPaste",
+                "websiteUrl": "https://ravelin.com",
+                "pasted": true,
+                "formId": "inputEmail"
+            }
+        ]
+    }
+]
 ```
-
-## Backend (Go)
-1. Build a go binary with an http server
-2. Accept post requests (json format)
-3. Map the json requests to relevant sections of the data struct
-4. Print the struct at trace level for each stage of it's construction.
-5. Also print the struct at info level when it is complete (i.e. form submit button has been clicked)
-6. Use go routines and channel where appropriate
-
-### Go Struct
-```
-type Data struct {
-  websiteUrl         string
-  sessionId          string
-  resizeFrom         Dimension
-  resizeTo           Dimension
-  copyAndPaste       map[string]bool // map[fieldId]true
-  formCompletionTime int // Seconds
-}
-
-type Dimension struct {
-  Width  string
-  Height string
-}
-```
-
-
-
-

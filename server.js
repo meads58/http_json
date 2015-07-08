@@ -1,5 +1,6 @@
 var express = require('express');
 var app = express();
+var fs = require('fs');
 var server = require('http').createServer(app);
 var path = require('path')
 
@@ -20,12 +21,17 @@ app.use(function(request, response, next) {
 });
 
 app.get('/', function(request, response){
-  response.sendFile(path.join(__dirname +'/index.html'));
+  response.sendFile(path.join(__dirname +'/views/index.html'));
 });
 
 app.post('/submitJson', jsonParser, function(request, response){
-  console.log(request.body)
-  console.log(request.sessionID)
+  var filePath = (path.join(__dirname + '/data/json_messages.txt'))
+  var message = request.body
+  message["sessionID"] = request.sessionID
+  fs.appendFile(filePath, JSON.stringify(message), function(err) {
+    if(err) throw err;
+    console.log(message)
+  })
   response.end();
 })
 

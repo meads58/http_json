@@ -1,14 +1,16 @@
 ##Set up
 * make sure npm is installed
-* clone the repo and cd into the directory
+* clone the repo and go in the directory ```cd http_json```
 * run ```npm install```
-* Start the server with ```npm start```
+* Express.js is used to run the node server.
+  * Start the server with ```npm start```
 * In a browser go to http://localhost:3000
 
 ##Functionality
 * Data is saved in the data/json_messages.txt file
-* Resize the window and the before and after size will be saved.
-* Copy and Past in any of the fields will update the data file with this action.
+* The terminal will also display the posted messages as they happen.
+* Resize the window and the before and after size will be saved. This will only happen for your first resize.
+* Copy and Pasting into any of the fields will update the data file with this event message.
 * The time from your first keystroke in any field until you press the Submit button will be recorded in the data file.
 
 ##Improvements given more time

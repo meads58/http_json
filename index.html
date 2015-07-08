@@ -8,6 +8,7 @@
 
       <!-- Optional theme -->
       <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css">
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
 
       <style type="text/css">
 body {
@@ -65,11 +66,11 @@ body {
           </label>
         </div>
 
-        <button class="btn btn-lg btn-primary btn-block" type="submit">Submit</button>
+        <button class="btn btn-lg btn-primary btn-block" onclick="stopTimer(); event.preventDefault();" type="submit">Submit</button>
       </form>
 
     </div> <!-- /container -->
-
+// onclick="stopTimer(); return false;"
 <script type="text/javascript">
   var browserResized = false;
   var resizeTimer;
@@ -78,7 +79,6 @@ body {
   var keyTimingStarted = false;
   var startTime;
   var message = {}
-  var buttonElement = document.getElementsByTagName("button");
 
   var constructMesssage = function(eventType) {
     message = {
@@ -101,7 +101,7 @@ body {
     var message = constructMesssage("copyAndPasted");
     message[copyOrPasted] = true;
     message["formId"] = idName
-    console.log(message)
+    sendingJson(message);
   }
 
   var setResize = function(beforeWidth, beforeHeight) {
@@ -109,24 +109,27 @@ body {
     message["resizeFrom"] = {"width": beforeWidth, "height": beforeHeight};
     message["resizeTo"] = {"width": window.innerWidth, "height": window.innerHeight};
     browserResize = true
+    sendingJson(message);
   };
 
   var keyTimer = function() {
     if (keyTimingStarted === false) {
       startTime = new Date;
-      keyTimingStarted  = true;
+      keyTimingStarted = true;
     }
   };
 
   var stopTimer = function() {
     if (keyTimingStarted === false){
-      timeInSecs = 0
+      timeInSecs = 0;
     }else {
       var stopTime = new Date;
-      var timeInSecs = (stopTime.getTime() - startTime.getTime()) / 1000
+      var timeInSecs = (stopTime.getTime() - startTime.getTime()) / 1000;
+      keyTimingStarted = false;
     }
-    sendingJson();
-    console.log(timeInSecs)
+    var message = constructMesssage("timer");
+    message["time"] = timeInSecs
+    sendingJson(message);
   };
 
   window.addEventListener("resize", function(e) {
@@ -139,25 +142,24 @@ body {
     }, 500);
   });
 
-  document.addEventListener("keydown", keyTimer);
-  buttonElement[0].addEventListener("click", stopTimer);
 
-  var sendingJson = function() {
+  var sendingJson = function(message) {
      $.ajax(
     {
+      type: 'POST',
       url : '/submitJson',
-      type: 'post',
-      dataType: 'json',
-      data: message,
-      success: function(data) { alert(data); },
-      error: function(request, status, error) { alert(request.responseText); }
-  });
+      contentType: 'application/json',
+      data: JSON.stringify(message),
+      complete: function(data) {
+        console.log(data)
+      },
+      error: function(request, status, error) {
+        console.log(error);
+      }
+    });
+  };
 
-
-  }
-
-
-
+  document.addEventListener("keypress", keyTimer);
 
 </script
 

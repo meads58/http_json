@@ -16,15 +16,9 @@
     "url": "https://github.com/meads58/http_json/issues"
   },
   "homepage": "https://github.com/meads58/http_json",
-  "devDependencies": {
-    "chai": "^3.0.0",
-    "grunt": "^0.4.5",
-    "grunt-webdriver": "^0.5.2",
-    "mocha": "^2.2.5",
-    "selenium-standalone": "^4.4.3",
-    "webdriverio": "^3.0.5"
-  },
   "dependencies": {
-    "express": "^4.13.1"
+    "body-parser": "^1.13.2",
+    "express": "^4.13.1",
+    "express-session": "^1.11.3"
   }
 }

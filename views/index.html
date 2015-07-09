@@ -82,9 +82,7 @@ body {
 
   var constructMesssage = function(eventType) {
     message = {
-    "websiteURL" : location.href,
-    "sessionID" : "1122",
-    "eventType" : eventType
+    "websiteURL" : location.href
   }
     return message
   };
@@ -101,15 +99,15 @@ body {
     var message = constructMesssage("copyAndPasted");
     message[copyOrPasted] = true;
     message["formId"] = idName
-    sendingJson(message);
+    sendingJson(message, 'copyAndPaste');
   }
 
   var setResize = function(beforeWidth, beforeHeight) {
-    var message = constructMesssage("resize");
+    var message = {}//constructMesssage("resize");
     message["resizeFrom"] = {"width": beforeWidth, "height": beforeHeight};
     message["resizeTo"] = {"width": window.innerWidth, "height": window.innerHeight};
     browserResize = true
-    sendingJson(message);
+    sendingJson(message, 'resize');
   };
 
   var keyTimer = function() {
@@ -125,11 +123,11 @@ body {
     }else {
       var stopTime = new Date;
       var timeInSecs = (stopTime.getTime() - startTime.getTime()) / 1000;
-      keyTimingStarted = false;
+      // keyTimingStarted = false;
     }
     var message = constructMesssage("timer");
     message["time"] = timeInSecs
-    sendingJson(message);
+    sendingJson(message, 'formCompletionTime');
   };
 
   window.addEventListener("resize", function(e) {
@@ -143,11 +141,11 @@ body {
   });
 
 
-  var sendingJson = function(message) {
+  var sendingJson = function(message, eventName) {
      $.ajax(
     {
       type: 'POST',
-      url : '/submitJson',
+      url : '/submitJson/' + eventName,
       contentType: 'application/json',
       data: JSON.stringify(message),
       complete: function(data) {

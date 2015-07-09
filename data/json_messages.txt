@@ -1,0 +1,9 @@
+{"resize":{"resizeFrom":{"width":1079,"height":357},
+"resizeTo":{"width":929,"height":297}},
+"copyAndPaste0":{"websiteURL":"http://localhost:3000/","pasted":true,"formId":"inputEmail"},
+"copyAndPaste1":{"websiteURL":"http://localhost:3000/","pasted":true,"formId":"inputCardNumber"},
+"copyAndPaste2":{"websiteURL":"http://localhost:3000/","pasted":true,"formId":"inputCVV"},
+"copyAndPaste3":{"websiteURL":"http://localhost:3000/","copied":true,"formId":"inputEmail"},
+"copyAndPaste4":{"websiteURL":"http://localhost:3000/","copied":true,"formId":"inputCardNumber"},
+"copyAndPaste5":{"websiteURL":"http://localhost:3000/","copied":true,"formId":"inputCVV"}
+,"sessionID":"TOxl8zHqy41rca7gldPV0aAmzAb_DyE7"}

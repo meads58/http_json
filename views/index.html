@@ -66,7 +66,7 @@ body {
           </label>
         </div>
 
-        <button class="btn btn-lg btn-primary btn-block" onclick="stopTimer(); event.preventDefault();" type="submit">Submit</button>
+        <button class="btn btn-lg btn-primary btn-block" onclick="stopKeyTimer(); event.preventDefault();" type="submit">Submit</button>
       </form>
 
     </div> <!-- /container -->
@@ -78,14 +78,6 @@ body {
   var beforeHeight = window.innerHeight;
   var keyTimingStarted = false;
   var startTime;
-  var message = {}
-
-  var constructMesssage = function(eventType) {
-    message = {
-    "websiteURL" : location.href
-  }
-    return message
-  };
 
   var pasting = function (idName){
     copyPasteMessage('pasted', idName)
@@ -96,38 +88,46 @@ body {
   };
 
   var copyPasteMessage = function(copyOrPasted, idName) {
-    var message = constructMesssage("copyAndPasted");
+    var message = {};
     message[copyOrPasted] = true;
-    message["formId"] = idName
+    message["formId"] = idName;
     sendingJson(message, 'copyAndPaste');
   }
 
   var setResize = function(beforeWidth, beforeHeight) {
-    var message = {}//constructMesssage("resize");
+    var message = {};
     message["resizeFrom"] = {"width": beforeWidth, "height": beforeHeight};
     message["resizeTo"] = {"width": window.innerWidth, "height": window.innerHeight};
-    browserResize = true
-    sendingJson(message, 'resize');
+    browserResize = true;
+    sendingJson(message, 'resizeFrom');
+    sendingJson(message, 'resizeTo');
   };
 
-  var keyTimer = function() {
+  var startKeyTimer = function() {
     if (keyTimingStarted === false) {
       startTime = new Date;
       keyTimingStarted = true;
     }
   };
 
-  var stopTimer = function() {
+  var stopKeyTimer = function() {
     if (keyTimingStarted === false){
       timeInSecs = 0;
     }else {
       var stopTime = new Date;
-      var timeInSecs = (stopTime.getTime() - startTime.getTime()) / 1000;
-      // keyTimingStarted = false;
+      var timeInSecs = Math.floor((stopTime.getTime() - startTime.getTime()) / 1000);
     }
-    var message = constructMesssage("timer");
-    message["time"] = timeInSecs
-    sendingJson(message, 'formCompletionTime');
+    sendFormTimeAndURL(timeInSecs);
+  };
+
+  var sendFormTimeAndURL = function(timeInSecs) {
+    var message = {};
+    var timeKey = 'formCompletionTime';
+    var urlKey = 'websiteUrl';
+    message[timeKey] = timeInSecs;
+    message[urlKey] = location.href;
+    sendingJson(message, urlKey);
+    sendingJson(message, timeKey);
   };
 
   window.addEventListener("resize", function(e) {
@@ -135,11 +135,10 @@ body {
     resizeTimer = setTimeout(function() {
       if (browserResized === false) {
         setResize(beforeWidth, beforeHeight)
-        browserResized = true
+        browserResized = true;
       }
     }, 500);
   });
-
 
   var sendingJson = function(message, eventName) {
      $.ajax(
@@ -157,7 +156,7 @@ body {
     });
   };
 
-  document.addEventListener("keypress", keyTimer);
+  document.addEventListener("keypress", startKeyTimer);
 
 </script
 

@@ -11,7 +11,7 @@ var session = require('express-session');
 var bodyParser = require('body-parser');
 var jsonParser = bodyParser.json();
 var currentSessionID  = '';
-var count = 0
+var buildArray = [];
 
 app.use(session({
   secret: 'keyboard cat',
@@ -29,28 +29,26 @@ app.get('/', function(request, response){
 });
 
 app.post('/submitJson/:eventName', jsonParser, function(request, response){
-  currentSessionID = request.sessionID
   var message = request.body
   var eventName = request.params.eventName
-  console.log(eventName)
+  currentSessionID = request.sessionID
   eventAction(eventName, message)
-  //addToCache(message)
-
   response.end();
-})
+});
 
 var eventAction = function(eventName, message) {
   switch(eventName) {
     case 'copyAndPaste':
-      addToCache('copyAndPaste' + count, message);
-      count += 1
+      arrOfCopyAndPaste(eventName, message);
       break;
     case 'formCompletionTime':
-      writeToFile('formCompletionTime', message)
+      addToCache(eventName, message[eventName]);
+      writeToFile()
+      break;
     default:
-       addToCache(eventName, message);
+      addToCache(eventName, message[eventName]);
   }
-}
+};
 
 var writeToFile = function(eventName, message) {
   var filePath = (path.join(__dirname + '/data/json_messages.txt'))
@@ -60,25 +58,26 @@ var writeToFile = function(eventName, message) {
     if(err) throw err;
     console.log(message)
   })
-}
+};
 
 var getAllMessages = function(){
   var messages = myCache.mget(myCache.keys());
-  return messages
-}
+  return messages;
+};
+
+var arrOfCopyAndPaste = function(cacheKey, message) {
+  var copyMessage = myCache.get(cacheKey);
+  buildArray.push(message);
+  addToCache(cacheKey, buildArray)
+};
 
 var addToCache = function(cacheKey, message) {
-
   myCache.set(cacheKey,message, function(err, success){
     if( !err && success ){
-      console.log( success );
+      console.log( 'added to cache: ' + success );
     }
-  })
-  // count = count + 1
-  // console.log(myCache.keys())
-  // console.log(myCache.mget(myCache.keys()));
-}
-
+  });
+};
 
 server.listen(3000, function(){
   console.log("Server listening on port 3000");
